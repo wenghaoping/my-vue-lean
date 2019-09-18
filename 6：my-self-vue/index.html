@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vue test</title>
+    <style>
+        input {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="message" v-on:change="changeMessgae">
+        <input type="text" v-model="user.firstname">
+        <input type="text" v-model="user.lastname">
+        <input type="text" v-model="html">
+        <ul>
+            <li>{{word}} {{word}} {{word}}</li>
+            <li>{{user.firstname}}</li>
+            <li>{{user.lastname}}</li>
+            <li>{{message}}</li>
+            <li>{{computeName}}</li>
+            <li v-html="html"></li>
+            <li v-text="message"></li>
+            <button v-on:click="clickBtn">点我改变</button>
+        </ul>
+
+    </div>
+    <script src="./index.js"></script>
+    <script src="./Compile.js"></script>
+    <script src="./Observer.js"></script>
+    <script src="./Watcher.js"></script>
+    <script src="./Dep.js"></script>
+    <script>
+        let vm = new MVVM({
+            el: '#app',
+            data () {
+                return {
+                    word: 'Hello World!',
+                    user: {
+                        firstname: 'firstname',
+                        lastname: 'lastname'
+                    },
+                    message: '我只是一条小消息',
+                    html: '<span style="color: red">我是红色</span>'
+                }
+            },
+            computed: {
+                computeName () {
+                    return this.word + this.message
+                }
+            },
+            methods: {
+                clickBtn (e) {
+                    const randomStrArr = ['我是第一个word', '我是第二个helloword', '我是第三个wordhello'];
+                    this.word = randomStrArr[parseInt(Math.random() * 3)];
+                },
+                changeMessgae (e) {
+                    console.log(e.target.value);
+                }
+            }
+        })
+        vm.$watch('user.firstname', function() {
+            console.log(arguments);
+        });
+    </script>
+</body>
+</html>
