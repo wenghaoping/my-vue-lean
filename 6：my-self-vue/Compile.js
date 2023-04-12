@@ -1,6 +1,6 @@
 class Compile {
     // 传入$el, mvvm this
-    constructor (el, vm) {
+    constructor(el, vm) {
         // 判断是否是元素节点
         this.$el = this.isElementNode(el) ? el : document.querySelector(el);
         this.$vm = vm;
@@ -11,7 +11,7 @@ class Compile {
             this.$fragment = this.node2Fragment(this.$el);
             // 2.编译 => 提取想要的元素节点v-model 和文本节点 {{}}
             this.compile(this.$fragment);
-
+            //123
             // 3.把编译好的fragment在放回页面里去
             this.$el.appendChild(this.$fragment);
 
@@ -20,13 +20,13 @@ class Compile {
     // 写辅助方法
 
     // 是不是元素节点
-    isElementNode (node) {
+    isElementNode(node) {
         // document.body.nodeType === 1;
         // 返回1，代表是一个元素
         return node.nodeType === 1;
     }
     // 是不是指令
-    isDirective (attr) {
+    isDirective(attr) {
         return attr.includes('v-');
     }
     // 是不是事件
@@ -42,7 +42,7 @@ class Compile {
     // 核心方法
 
     // 编译元素节点
-    compileElement (node) {
+    compileElement(node) {
         // 带v-
         let attr = node.attributes;// 取出当前节点的属性(一个无顺序的节点列表。)
         Array.from(attr).forEach(attribute => {
@@ -64,14 +64,14 @@ class Compile {
                     // 普通指令
                     // console.log(directive);
                     CompileUtil[directive] &&
-                    CompileUtil[directive](node, this.$vm, property);
+                        CompileUtil[directive](node, this.$vm, property);
                 }
             }
         })
     }
 
     // 编译文本节点
-    compileText (node) {
+    compileText(node) {
         // 带 {{ }}
         const property = node.textContent;
 
@@ -102,7 +102,7 @@ class Compile {
         })
     }
     // 需要将el中的内容全部放到内存中
-    node2Fragment (el) {
+    node2Fragment(el) {
         // 创建文档片段对象，不是真实的dom 11，内存中的dom节点
         // 操作Fragmen，不会造成页面重绘
         let fragment = document.createDocumentFragment();
@@ -121,20 +121,20 @@ class Compile {
 
 CompileUtil = {
     // 获取其中的值
-    _getVal (vm, property) {
+    _getVal(vm, property) {
         let value = property.split('.'); // [a, b, c]
         return value.reduce((prev, next) => {
             return prev[next];
         }, vm.$data);
     },
     // 获取编译以后的文本的结果
-    _getTextVal (vm, property) {
+    _getTextVal(vm, property) {
         return property.replace(/{\{([^}]+)\}\}/g, (...arguments) => {
             return this._getVal(vm, arguments[1]);
         });
     },
     // 设置值
-    _setVal (vm, property, newValue) { // [message, a]
+    _setVal(vm, property, newValue) { // [message, a]
         let value = property.split('.');
         return value.reduce((prev, next, currentIndex) => {
             if (currentIndex === value.length - 1) {
@@ -144,7 +144,7 @@ CompileUtil = {
         }, vm.$data);
     },
     // 文本处理
-    text (node, vm, property) {
+    text(node, vm, property) {
         let updaterFn = this.updater['textUpdater'];
         // property === {{user.firstname}} => user.firstname
         property.replace(/{\{([^}]+)\}\}/g, (...arguments) => {
@@ -165,7 +165,7 @@ CompileUtil = {
         updaterFn && updaterFn(node, this._getVal(vm, property));
     },
     // 输入框处理
-    model (node, vm, property) {
+    model(node, vm, property) {
         let updaterFn = this.updater['modelUpdater'];
         // 这里需要添加监控，数据变化了，应该调用这个watch的callback
         new Watcher(vm, property, (newValue) => {
@@ -191,11 +191,11 @@ CompileUtil = {
     },
     updater: {
         // 文本更新
-        textUpdater (node, value) {
+        textUpdater(node, value) {
             node.textContent = typeof value === 'undefined' ? '' : value;
         },
         // 输入框更新
-        modelUpdater (node, value) {
+        modelUpdater(node, value) {
             node.value = typeof value === 'undefined' ? '' : value;
         },
         // 将当前元素节点的innerHTML替换成属性值。
